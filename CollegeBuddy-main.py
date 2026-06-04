@@ -1,85 +1,45 @@
-import streamlit as st
-from streamlit_lottie import st_lottie
-from streamlit_option_menu import option_menu
 import requests
-import json
-import os
-from pathlib import Path
+import pywhatkit
+import logging
+from datetime import datetime
+import random
 
-st.set_page_config(
-    page_title="College Buddy",
-    page_icon="src/Logo College.png",
-    layout="wide",
-    initial_sidebar_state="auto",
-    menu_items=None
+
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(levelname)s - %(message)s',
+    handlers=[logging.FileHandler("whatsapp_motivator.log"), logging.StreamHandler()]
 )
 
-# Load CSS
-current_dir = Path(__file__).parent if "__file__" in locals() else Path.cwd()
-css_file = current_dir / "src" / "main.css"
-if css_file.exists():
-    with open(css_file) as f:
-        st.markdown("<style>{}</style>".format(f.read()), unsafe_allow_html=True)
 
-st.markdown("""
-<style>
-#MainMenu {visibility: hidden;}
-footer {visibility: hidden;}
-</style>
-""", unsafe_allow_html=True)
+quotes = [
+    "Paise de diijiye",
+    "pay karde bhai",
+    "final payment kabtak ayegi?",
+    "paise nahi the to kaam kyu karaya",
+    "you are gareeb"
+]
 
 
-def load_lottieurl(url: str):
+def get_random_quote():
+    quote = random.choice(quotes)
+    logging.info(f"Selected quote: {quote}")
+    return quote
+
+
+def send_whatsapp_message(phone_number, message):
     try:
-        r = requests.get(url, timeout=5)
-        if r.status_code != 200:
-            return None
-        return r.json()
-    except Exception:
-        return None
+        # Send the message using PyWhatKit
+        pywhatkit.sendwhatmsg_instantly(phone_number, message, wait_time=15)
+        logging.info(f"WhatsApp message sent successfully: {message}")
+    except Exception as e:
+        logging.error(f"Error sending WhatsApp message: {e}")
 
+def main():
+    logging.info("WhatsApp Motivator AI Agent activated.")         
+    quote = get_random_quote()
+    phone_number = "+918084814411"     
+    send_whatsapp_message(phone_number, f"Mr.Client:\n\n\"{quote}\"")
 
-def load_lottiefile(filepath: str):
-    try:
-        with open(filepath, "r") as f:
-            return json.load(f)
-    except Exception:
-        return None
-
-
-# --- Header ---
-lottie_home = load_lottiefile("src/Home_student.json")
-col1, col2 = st.columns([1, 9])
-with col1:
-    if lottie_home:
-        st_lottie(lottie_home, height=100, width=100)
-with col2:
-    st.header(":rainbow[Welcome to College Buddy 🎓]", divider="rainbow")
-
-st.markdown("### Your All-in-One College Companion")
-st.write(
-    "College Buddy helps you build your profile, ace interviews, explore jobs & hackathons, "
-    "and sharpen your knowledge — all in one place."
-)
-
-st.markdown("---")
-
-# --- Feature Cards ---
-col1, col2, col3 = st.columns(3)
-
-with col1:
-    st.markdown("#### 🧑‍🏫 Profile Builder")
-    st.write("Build your coding profile, track LeetCode, Codeforces stats, and showcase your GitHub.")
-    st.page_link("pages/🧑\u200d🏫ProfileBuilder.py", label="Go to Profile Builder →")
-
-with col2:
-    st.markdown("#### 🗃️ Job & Hack Hub")
-    st.write("Discover hackathons, job listings, and exam resources curated for college students.")
-    st.page_link("pages/🗃️JobHackHub.py", label="Go to Job & Hack Hub →")
-
-with col3:
-    st.markdown("#### 🧠 Knowledge Builder")
-    st.write("Get personalized roadmaps, practice mock interviews, and use the AI-powered code editor.")
-
-st.markdown("---")
-st.caption("College Buddy • Built for students, by students 🚀")
+if __name__ == "__main__":
+    main()

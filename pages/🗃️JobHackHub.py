@@ -136,7 +136,8 @@ def hactkon():
 selected = streamlit_menu(example=EXAMPLE_NO)
 if 'questions' not in st.session_state:
     st.session_state.questions = []
-def get_hackathons():
+def hackathons():
+    # Replace real-time data fetching with hardcoded sample data
     hackathons = [
         {
             'name': 'Hackathon Alpha',
@@ -161,8 +162,7 @@ def get_hackathons():
 
 if selected == "Hackthons":
     hackathons=hactkon()
-    if not hackathons:
-        hackathons=get_hackathons()
+    hackathons=hackathons()
     st.title("Hackathons Listings")
 
     # Create columns for each hackathon
