@@ -80,7 +80,6 @@ with col2:
 with col3:
     st.markdown("#### 🧠 Knowledge Builder")
     st.write("Get personalized roadmaps, practice mock interviews, and use the AI-powered code editor.")
-    st.page_link("KnowledgeBuilder.py", label="Go to Knowledge Builder →")
 
 st.markdown("---")
 st.caption("College Buddy • Built for students, by students 🚀")
